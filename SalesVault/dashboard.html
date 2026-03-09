@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Entry Form</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="icon" type="image/png" href="./img/vulto.png">
+</head>
+
+
+
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>;
+    <script>
+        // If user is not logged in, redirect to login
+        if (localStorage.getItem("isLoggedIn") !== "true") {
+            window.location.href = "index.html";
+        }
+
+        // Prevent browser back button from going back to login
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+
+
+        // 2️⃣ Session timeout: auto logout after 30 minutes of inactivity
+        let timeout;
+        function resetTimer() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                alert("Session expired due to inactivity!");
+                localStorage.removeItem("isLoggedIn");
+                localStorage.removeItem("user");
+                window.location.href = "index.html";
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        // Reset timer on any user activity
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.onclick = resetTimer;
+        document.onscroll = resetTimer;
+
+        resetTimer();
+
+
+
+        document.addEventListener('contextmenu', e => e.preventDefault()); // disables right-click
+        document.addEventListener('keydown', e => {
+            if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I") ||
+                (e.ctrlKey && e.shiftKey && e.key === "J") || (e.ctrlKey && e.key === "U")) {
+                e.preventDefault(); // disables dev tools shortcuts
+            }
+        });
+
+        let devtools = false;
+        setInterval(() => {
+            const threshold = 160;
+            devtools = window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold;
+            if (devtools) alert('Dev tools detected!');
+        }, 1000);
+
+
+
+    </script>
+    <div class="container">
+
+        <div class="header">
+            <h2>Welcome, <span id="usernameDisplay"></span></h2>
+            <h2>Data Entry System</h2>
+            <a href="#" class="logout-btn" onclick="logout()">Logout</a>
+        </div>
+        <div class="card summary-card">
+
+            <div class="summary-top">
+                <div class="stat-box">
+                    <h3>Total</h3>
+                    <span id="totalCount">0</span>
+                </div>
+
+                <div class="stat-box">
+                    <h3>Total SSDI</h3>
+                    <span id="ssdiCount">0</span>
+                </div>
+
+                <div class="stat-box">
+                    <h3>Total Auto</h3>
+                    <span id="autoCount">0</span>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <input type="text" id="searchInput" placeholder="Search by name or phone">
+
+                <select id="filterType">
+                    <option value="">Filter by Type</option>
+                    <option value="SSDI">SSDI</option>
+                    <option value="DQ">DQ</option>
+                    <option value="AUTO">AUTO</option>
+                    <option value="ACA">ACA</option>
+                </select>
+
+                <input type="month" id="monthPicker">
+                <button type="button" onclick="downloadProtectedPDF()">Download PDF</button>
+            </div>
+
+        </div>
+        <div class="card">
+
+            <div class="card-header" onclick="toggleForm()">
+                <h2>Add New Entry</h2>
+                <span id="toggleIcon">+</span>
+            </div>
+
+            <div id="formContainer" class="form-wrapper">
+
+                <form id="dataForm">
+                    <div class="form-grid">
+                        <input type="text" id="phone" placeholder="Phone" required>
+                        <input type="text" id="name" placeholder="Name" required>
+                        <input type="text" id="verifier" placeholder="Verifier Name" required>
+
+                        <select id="type" required>
+                            <option value="">Select Type</option>
+                            <option>SSDI</option>
+                            <option>DQ</option>
+                            <option>AUTO</option>
+                            <option>ACA</option>
+                        </select>
+
+                        <input type="datetime-local" id="date" required>
+                        <button type="submit">Add</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="card table-card">
+
+            <div class="card-header" onclick="toggleTable()">
+                <h2>Data List</h2>
+                <span id="toggleTableIcon">+</span>
+            </div>
+
+            <div id="tableContainer" class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phone</th>
+                            <th>Name</th>
+                            <th>Verifier Name</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="watermark">
+        &copy; 2026 Made by CodeCompass | Contact: 8052281445
+    </div>
+
+    <script src="./dashboard.js"></script>
+
+</body>
+
+</html>

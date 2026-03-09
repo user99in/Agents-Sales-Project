@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Login</title>
+<link rel="stylesheet" href="index.css">
+<link rel="icon" type="image/png" href="./img/vulto.png">
+ 
+</head>
+
+<body>
+
+
+<script>
+
+
+    document.addEventListener('contextmenu', e => e.preventDefault()); // disables right-click
+document.addEventListener('keydown', e => {
+    if(e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I") || 
+       (e.ctrlKey && e.shiftKey && e.key === "J") || (e.ctrlKey && e.key === "U")){
+        e.preventDefault(); // disables dev tools shortcuts
+    }
+});
+
+
+let devtools = false;
+setInterval(() => {
+    const threshold = 160;
+    devtools = window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold;
+    if(devtools) alert('Dev tools detected!');
+}, 1000);
+
+</script>
+
+<div class="form-container">
+    <h2>Login</h2>
+
+    <form onsubmit="return validateLogin()">
+        <div class="input-group">
+            <input type="text" id="username" required>
+            <label>Username</label>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" required>
+            <label>Password</label>
+        </div>
+
+        <button type="submit">Login</button>
+        <div class="error" id="errorMsg"></div>
+    </form>
+</div>
+
+<div class="watermark">
+    &copy; 2026 Made by CodeCompass | Contact: 8052281445
+</div>
+
+
+<script>
+function validateLogin() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if(username === "Surya" && password === "Admin@1234") {
+        // Set login session in localStorage
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", username);
+
+        // Redirect to dashboard
+        window.location.href = "dashboard.html";
+        return false;
+    } else {
+        document.getElementById("errorMsg").innerText = "Invalid Username or Password!";
+        return false;
+    }
+}
+</script>
+
+</body>
+</html>
